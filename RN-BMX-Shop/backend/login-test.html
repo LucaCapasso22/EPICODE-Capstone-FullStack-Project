@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Login RN-BMX-Shop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .container {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px 0;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0 15px;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .result {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .error {
+        color: red;
+      }
+      .success {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Test Login RN-BMX-Shop</h1>
+
+    <div class="container">
+      <h2>1. Lista Utenti Disponibili</h2>
+      <button id="listUsers">Ottieni Lista Utenti</button>
+      <div id="usersList" class="result"></div>
+    </div>
+
+    <div class="container">
+      <h2>2. Verifica Password</h2>
+      <div>
+        <label for="checkEmail">Email:</label>
+        <input type="email" id="checkEmail" value="admin@rnbmx.com" />
+
+        <label for="checkPassword">Password:</label>
+        <input type="password" id="checkPassword" value="password123" />
+
+        <button id="checkPasswordBtn">Verifica Password</button>
+      </div>
+      <div id="passwordCheckResult" class="result"></div>
+    </div>
+
+    <div class="container">
+      <h2>3. Reimposta Password</h2>
+      <div>
+        <label for="resetEmail">Email:</label>
+        <input type="email" id="resetEmail" value="admin@rnbmx.com" />
+
+        <label for="resetPassword">Nuova Password:</label>
+        <input type="password" id="resetPassword" value="password123" />
+
+        <button id="resetPasswordBtn">Reimposta Password</button>
+      </div>
+      <div id="resetResult" class="result"></div>
+    </div>
+
+    <div class="container">
+      <h2>4. Effettua Login</h2>
+      <div>
+        <label for="loginEmail">Email:</label>
+        <input type="email" id="loginEmail" value="admin@rnbmx.com" />
+
+        <label for="loginPassword">Password:</label>
+        <input type="password" id="loginPassword" value="password123" />
+
+        <button id="loginBtn">Login</button>
+      </div>
+      <div id="loginResult" class="result"></div>
+    </div>
+
+    <script>
+      // Configurazione
+      const API_URL = 'http://localhost:8080'
+
+      // Funzioni di utilità
+      function displayResult(elementId, data, isError = false) {
+        const el = document.getElementById(elementId)
+        el.textContent =
+          typeof data === 'object' ? JSON.stringify(data, null, 2) : data
+        el.className = isError ? 'result error' : 'result success'
+      }
+
+      function logError(elementId, error) {
+        console.error('Error:', error)
+        let message = 'Errore: '
+
+        if (error.response) {
+          // Errore dal server
+          message += `${error.response.status} - ${
+            error.response.data?.message || 'Errore del server'
+          }`
+        } else if (error.request) {
+          // Nessuna risposta ricevuta
+          message +=
+            'Nessuna risposta dal server. Verifica che il backend sia in esecuzione.'
+        } else {
+          // Errore durante la configurazione della richiesta
+          message += error.message
+        }
+
+        displayResult(elementId, message, true)
+      }
+
+      // Funzioni per le API
+      async function fetchUsers() {
+        try {
+          const response = await fetch(`${API_URL}/api/debug-login/users`)
+          if (!response.ok)
+            throw new Error(`Server ha risposto con ${response.status}`)
+          const data = await response.json()
+          displayResult('usersList', data)
+        } catch (error) {
+          logError('usersList', error)
+        }
+      }
+
+      async function checkPassword(email, password) {
+        try {
+          const response = await fetch(
+            `${API_URL}/api/debug-login/check-password?email=${encodeURIComponent(
+              email
+            )}&password=${encodeURIComponent(password)}`
+          )
+          if (!response.ok)
+            throw new Error(`Server ha risposto con ${response.status}`)
+          const data = await response.json()
+          displayResult('passwordCheckResult', data)
+        } catch (error) {
+          logError('passwordCheckResult', error)
+        }
+      }
+
+      async function resetPassword(email, newPassword) {
+        try {
+          const response = await fetch(
+            `${API_URL}/api/debug-login/reset-password?email=${encodeURIComponent(
+              email
+            )}&newPassword=${encodeURIComponent(newPassword)}`,
+            {
+              method: 'POST',
+            }
+          )
+          if (!response.ok)
+            throw new Error(`Server ha risposto con ${response.status}`)
+          const data = await response.json()
+          displayResult('resetResult', data)
+        } catch (error) {
+          logError('resetResult', error)
+        }
+      }
+
+      async function login(email, password) {
+        try {
+          const response = await fetch(`${API_URL}/api/auth/signin`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+            }),
+          })
+
+          if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(
+              errorData.message || `Server ha risposto con ${response.status}`
+            )
+          }
+
+          const data = await response.json()
+          displayResult('loginResult', data)
+        } catch (error) {
+          logError('loginResult', error)
+        }
+      }
+
+      // Event Listeners
+      document
+        .getElementById('listUsers')
+        .addEventListener('click', () => fetchUsers())
+
+      document
+        .getElementById('checkPasswordBtn')
+        .addEventListener('click', () => {
+          const email = document.getElementById('checkEmail').value
+          const password = document.getElementById('checkPassword').value
+          checkPassword(email, password)
+        })
+
+      document
+        .getElementById('resetPasswordBtn')
+        .addEventListener('click', () => {
+          const email = document.getElementById('resetEmail').value
+          const password = document.getElementById('resetPassword').value
+          resetPassword(email, password)
+        })
+
+      document.getElementById('loginBtn').addEventListener('click', () => {
+        const email = document.getElementById('loginEmail').value
+        const password = document.getElementById('loginPassword').value
+        login(email, password)
+      })
+    </script>
+  </body>
+</html>

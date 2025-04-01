@@ -1,0 +1,24 @@
+{
+  "name": "rn-bmx-shop-monorepo",
+  "version": "1.0.0",
+  "description": "Monorepo per RN BMX Shop con frontend e backend",
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:frontend": "cd RN-BMX-Shop/frontend && npm start",
+    "start:backend": "cd RN-BMX-Shop/backend && mvn spring-boot:run",
+    "install:frontend": "cd RN-BMX-Shop/frontend && npm install",
+    "build:frontend": "cd RN-BMX-Shop/frontend && npm run build",
+    "test:frontend": "cd RN-BMX-Shop/frontend && npm test"
+  },
+  "keywords": [
+    "react",
+    "spring-boot",
+    "e-commerce",
+    "bmx"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
