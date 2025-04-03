@@ -9,7 +9,7 @@ E-commerce completo per un negozio di BMX, sviluppato da Capasso Luca (lucacapas
 - **React 18**: Libreria JavaScript per la costruzione dell'interfaccia utente
 - **React Router v6**: Per la gestione delle rotte e della navigazione
 - **React Bootstrap**: Framework CSS per componenti responsive
-- **Redux**: Per la gestione dello stato globale dell'applicazione
+- **React Hooks**: Per la gestione dello stato globale dell'applicazione
 - **Axios**: Per le chiamate API
 - **Framer Motion**: Per animazioni fluide nell'interfaccia
 - **React Icons**: Per icone moderne e versatili
