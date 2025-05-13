@@ -20,7 +20,7 @@ E-commerce completo per un negozio di BMX, sviluppato da Capasso Luca (lucacapas
 - **Spring Security**: Per l'autenticazione e l'autorizzazione
 - **JWT**: Per la gestione dei token di sicurezza
 - **Spring Data JPA**: Per l'accesso ai dati con Hibernate
-- **MySQL**: Database relazionale per la persistenza dei dati
+- **PostgreSQL**: Database relazionale per la persistenza dei dati
 - **Lombok**: Per la riduzione del codice boilerplate
 - **Maven**: Per la gestione delle dipendenze
 
